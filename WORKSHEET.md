@@ -1,36 +1,45 @@
-# Student activity: teach the car
+# Teach a car from examples
 
-**Question:** Can a decision tree copy our steering from examples?
+**Question:** Can a decision tree imitate your driving?
 
-1. Run `python driving_school.py`, open port 8000 in the browser, and click Start. What happens when you
-   hold the right arrow? What happens when you release it?
-2. Look at the five rays. They measure the distance to the walls. These are the
-   **features**. The action you choose is the **label**.
-3. Reset, then click Drive. Record a short, careful drive. Click Pause.
-4. Open one CSV in `runtime/recordings/`. Identify the five features, the label,
-   and the next waypoint. Explain why the waypoint is not a model feature.
-5. Open `train.py`. Follow the code with your instructor. `X` is a list of rows of
-   distances; `y` is a list of answers. `fit(X, y)` learns from those paired lists.
-   Imports bring in tools; brackets make a list; indentation groups function code.
-6. Run `python train.py` in a second terminal while the server stays running. Note how many left, straight and right examples you saved.
-7. Return to the page and click AI Drive. `predict` chooses a new action
-   from the current sensors at each step. Observe a complete lap or a collision.
-8. Collect another drive and retrain, or change `MAX_DEPTH` in `train.py` while
-   keeping the data fixed. Does the behavior change? Explain what you actually saw.
+1. Open `web/index.html` with Live Server. Open forwarded port 5500. Click Start
+   choose Round, and practice with left/right arrows. Click the track if it loses keyboard focus.
+2. Open “What the car sees.” Explain one of the five sensor values in your own words.
+   These numbers are **features**. The steering action is the **label**.
+3. Click Drive and record a controlled demonstration. Pause, download CSV, and
+   upload it into `runtime/recordings/` in VS Code. Open the CSV. Find a row's five
+   features, its label, and its waypoint metadata. Why exclude position from X?
+4. Read `train.py` with your instructor. An `import` brings in existing code.
+   A variable names a value; a list holds several values. Indented lines belong
+   together in a function. Parentheses call a function. `X` contains sensor rows;
+   `y` contains the matching labels. Locate `DecisionTreeClassifier` and `fit`.
+5. Run `.venv/bin/python train.py` in the repository-root terminal. Inspect label
+   counts. Download `runtime/model.json` from VS Code, load it in the browser,
+   and click AI Drive. Record progress and how the car failed or completed a lap.
+6. Collect different examples on Rounded rectangle and Irregular. Switching tracks
+   pauses and resets the car but keeps your existing examples. Download, then Clear examples before another
+   recording so repeated exports do not duplicate old rows. Retrain and reload.
+7. Compare a shallower and deeper tree by changing `MAX_DEPTH`. Keep the same data
+   while comparing settings. An optional extension is `MIN_SAMPLES_LEAF`.
 
-| Attempt | Data / number of rows | Max depth | Completed lap? | Observation |
-|---|---|---|---|---|
-| 1 | | 6 | | |
-| 2 | | | | |
-| 3 | | | | |
+| Run | CSV files / sample count | Depth | Leaf minimum | Lap progress | Collision? | Observation |
+| --- | --- | --- | --- | --- | --- | --- |
+| First drive | | 6 | 3 | | | |
+| More varied data | | 6 | 3 | | | |
+| Shallower tree | | | 3 | | | |
+| Deeper tree | | | 3 | | | |
 
-A deeper tree can ask more questions before giving an answer. It is not guaranteed
-to be better. More examples do not always help if they demonstrate poor steering.
-A small mistake can move the car into sensor situations missing from your examples.
+Explain what actually happened; deeper trees and more examples are not guaranteed
+to help. Prediction means following the learned tree to choose a steering label.
+Overfitting means learning details of the examples that do not transfer well.
+Generalization means doing well on new situations. All three tracks accept demonstrations. A track used for training is not an
+unseen test track. For an extension, reserve one track, collect no examples on it,
+and test it only after choosing your settings. Multiple tracks do not guarantee
+that overfitting disappears.
 
-**Reflection:** What are the features and label? How does fitting differ from
-prediction? Describe one failure. Why would success on the same circular track
-not prove that the car can drive on an unfamiliar track?
+**Exit ticket:** Name the features and label. Describe a failure and a possible
+data-related explanation. Why is matching steering labels different from driving
+a whole lap? What additional track would you use to test generalization?
 
-Submit `train.py`, your observations, and the CSV requested by your instructor.
-If the page cannot connect, open the Python server’s forwarded port 8000. Live Server alone cannot run its Python API.
+Submit `train.py`, the requested CSV, your experiment table and reflection.
+Download your work before deleting a Codespace; stop the Codespace after class.

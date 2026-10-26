@@ -1,6 +1,6 @@
-"""Pause recording, then run: python train.py. These are the ML steps to study."""
+"""Download your CSV into runtime/recordings/, then run: python train.py. These are the ML steps to study."""
 from sklearn.tree import DecisionTreeClassifier
-from simulator.recordings import load_examples, save_model
+from training import load_examples, save_model
 
 # Try changing these two settings after your first experiment.
 MAX_DEPTH = 6
@@ -21,7 +21,7 @@ def train():
     )
     model.fit(X, y)
     save_model(model, rows)
-    print(f'Trained on {len(rows)} examples. Now click AI Drive in the browser.')
+    print(f'Trained on {len(rows)} examples. Load runtime/model.json in the browser, then click AI Drive.')
     return model
 
 

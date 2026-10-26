@@ -10,6 +10,10 @@
   <main>
     <h1>AI Driving School</h1>
     <p>Drive the car. Collect examples. Teach a decision tree.</p>
+    <div class="controls" style="margin-bottom:6px">
+      <label for="track-select"><strong>Track:</strong></label>
+      <select id="track-select" style="font:600 17px system-ui;padding:8px 14px;border:1px solid #7a9280;border-radius:7px;background:white;color:#203129;cursor:pointer"></select>
+    </div>
     <canvas id="track" width="900" height="600" tabindex="0" aria-label="Driving track. Left and right arrows steer; Space pauses."></canvas>
     <div class="controls" aria-label="Driving controls">
       <button data-command="Start">Start</button>
@@ -18,12 +22,16 @@
       <button data-command="Reset">Reset</button>
       <button data-command="AI">AI Drive</button>
     </div>
-    <p id="status" role="status" aria-live="polite">Connecting to Python…</p>
-    <p id="details">Paused · 0 examples saved this tab</p>
+    <p id="status" role="status" aria-live="polite">Ready.</p>
+    <p id="details">Paused · 0 examples in this tab</p>
     <p class="hint"><strong>← →</strong> steer · <strong>Space</strong> pauses · Start practices without recording.<br>
-      After recording: Pause, run <code>.venv/bin/python train.py</code> in another terminal, then click <strong>AI Drive</strong>.</p>
+      Pick a track above before starting — the <code>track_id</code> column in the CSV records which track each example came from.<br>
+      After recording: download CSV, upload it to <code>runtime/recordings/</code> in VS Code, and run <code>.venv/bin/python train.py</code>.<br>Download <code>runtime/model.json</code> from VS Code, load it below, then click <strong>AI Drive</strong>.</p>
+    <div class="controls"><button id="download">Download CSV</button><button id="clear">Clear examples</button><label>Load model.json <input id="model" type="file" accept=".json,application/json"></label></div>
+    <p class="hint">Examples stay in this tab until you refresh or close it. Download them to keep them. A/D also steer; both directions together mean straight.</p>
     <details><summary>What the car sees</summary><p id="sensors">Five wall distances, left to right.</p><p class="hint">0 = at the wall; 1 = at least 180 units away. These five numbers are the model’s only features.</p></details>
   </main>
+  <script src="simulation.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

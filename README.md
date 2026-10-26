@@ -1,149 +1,181 @@
 # AI Driving School
 
-**Drive a car. Record examples. Train a decision tree. Watch it drive.**
+Can we teach a car to drive from examples?
 
-One plain HTML/CSS/JavaScript page with a circular track. Python handles physics,
-recordings and machine learning. No Pygame, dashboard or frontend build system.
+A small browser simulator for an introductory machine-learning lesson. **HTML,
+CSS, and JavaScript run the entire game locally in your browser. Python is used
+only to train a scikit-learn decision tree.** No Python server, Pygame, API,
+frontend build system, or model upload service is needed.
 
-## Open in Codespaces
+## Start in Codespaces
 
-1. Open your class repository in a Codespace. Wait for its automatic dependency setup.
-2. In the terminal, run:
+1. Open your copy of this repository in a Codespace. Wait for the environment setup
+   to finish; it installs Python 3.12.14 and the pinned training dependencies.
+2. Open `web/index.html`, right-click, and choose **Open with Live Server**.
+3. Open forwarded port **5500** in the Ports panel. If it opens the repository
+   listing, choose `web/`. Keep the port **Private**.
 
-   ```bash
-   .venv/bin/python driving_school.py
+Live Server serves the files; driving does not make network requests. Each tab has
+its own car and examples. The host and port are configured in `.vscode/settings.json`.
+Codespaces availability and cost depend on your account and organization policies.
+Check access and available usage before class. Stop your Codespace after class
+using the Codespaces menu or GitHub's Codespaces page.
+
+## Drive, train, and watch
+
+1. Choose **Round**, **Rounded rectangle**, or **Irregular**. Changing tracks pauses
+   and resets the car while keeping recorded examples. **Start** practices without recording. Click the track if the keys do not work.
+2. **Drive · record** starts moving and collects examples. Left/right arrows or
+   A/D steer. No steering key means straight; both directions together also mean
+   straight. Forward speed is constant. Space or **Pause** stops the car.
+3. **Download CSV** pauses and downloads all examples in this tab. In the VS Code
+   Explorer, create `runtime/recordings/`, then upload/drag the downloaded CSV there.
+   In Codespaces, downloads go to your own computer, not automatically into the
+   remote repository. Upload each recording once to avoid duplicate examples.
+4. Run this in the repository-root terminal:
+
+   ```sh
+   .venv/bin/python train.py
    ```
 
-3. Open **AI Driving School · 8000** in the **Ports** panel if it does not open
-   automatically. Keep port visibility **Private**.
+5. Right-click `runtime/model.json` in VS Code and **Download** it. On the simulator
+   page choose **Load model.json**, select that file, then click **AI Drive**.
+   Locally, you can select `runtime/model.json` directly without downloading it.
+6. Collect more examples or change `MAX_DEPTH` in `train.py`, retrain, then load
+   the new model file. The browser keeps the last model you explicitly loaded.
 
-This feels like opening a site with Live Server, but **use the Python server for
-this project**. Live Server only serves static files; it cannot run the Python
-recording/model API. Both the page and API come from port 8000, using relative URLs
-that work through Codespaces HTTPS forwarding. No Live Server extension is needed.
+**Reset** begins a new episode and keeps examples. **Clear examples** removes only
+this tab's examples after confirmation. To discard a downloaded recording from
+training, delete that specific CSV from `runtime/recordings/`. Downloading does
+not clear the tab: clear it before recording another separate dataset to avoid
+re-exporting the same rows. Closing or refreshing the tab loses its examples and
+loaded model. Download before closing. Uploaded CSVs and exported models survive
+Codespace restarts, but download your work before deleting a Codespace.
 
-Codespaces availability and included usage depend on your account/organization.
-Ask about pairing or local setup if you cannot create one. The container setup is
-provided; hosted Codespaces operation still needs an instructor preflight check.
+## Included recording and model
 
-## The three steps
+This snapshot includes a 336-example recording from Irregular in
+`runtime/recordings/` and its trained `runtime/model.json`. For a quick Codespaces
+check, open the simulator, download that JSON from VS Code, load it in the page,
+select Irregular, and click AI Drive. You can also rerun `train.py` using the
+included CSV. The model completed Irregular and Rounded rectangle in local
+headless checks; it collided at about 21% progress on Round.
 
-### 1. Drive
+These files are intentionally committed for classroom testing. New recordings and
+other generated runtime files remain ignored by Git. Retraining changes the tracked
+model file; download your work before deleting a Codespace. The obsolete joblib
+artifact is not included and is not used by the browser.
 
-- **Start:** practice without saving data.
-- **Drive · record:** start moving and save your steering examples.
-- **Left / right arrows** or A/D: steer. No key or both directions = straight.
-- **Pause** or Space: stop time and recording steps.
-- **Reset:** return to the start; keep previously saved files.
+## Files to study
 
-Click a driving button to focus the track. Clicking outside the track or leaving
-the tab pauses and clears steering. A collision or completed lap stops the car;
-Start or Drive begins a new episode. Each browser tab has its own run.
+- `train.py`: the short ML program; select features and labels, create the tree,
+  call `fit`, and export it. Change depth here.
+- `training.py`: supplied CSV validation and JSON export helpers.
+- `web/index.html`, `style.css`, `app.js`: page, appearance, controls and animation.
+- `web/simulation.js`: physics, sensors, waypoints and decision-tree prediction.
+- `WORKSHEET.md`: activity and reflection questions.
 
-### 2. Train
+`max_depth` limits how many successive questions the tree can ask.
+`min_samples_leaf` sets the minimum examples supporting a final decision.
+A deeper tree or more examples does not always improve driving. Observe and explain.
 
-Click **Pause**. Keep the server running and open a **second terminal**:
+## What is recorded?
 
-```bash
-.venv/bin/python train.py
-```
+CSV columns are in this exact order:
 
-`train.py` is the short student learning example: select the five sensor features,
-select the steering label, construct a `DecisionTreeClassifier`, call `fit`, and
-save the model. Change `MAX_DEPTH` to experiment. Stop recording in all open tabs
-before training so the dataset stays fixed.
+| Columns | Meaning |
+| --- | --- |
+| left, front_left, front, front_right, right | Five features: wall distances at −70°, −35°, 0°, 35°, 70° relative to the car |
+| steering | Label: left, straight, or right |
+| track_id, split | `round`, `rounded_rect`, or `irregular_smooth`; split is `train` |
+| episode_id, step, time | Episode identifier, control step, simulated seconds |
+| x, y, heading | Position and direction for auditing only |
+| next_waypoint, waypoint_x, waypoint_y | Next ordered checkpoint for auditing only |
+| waypoints_passed, progress | Ordered gates reached and percentage of lap |
+| schema_version | `browser-1` |
 
-### 3. Watch the AI
+Sensor range is 180 units: 0 means at a wall, 1 means no wall within range. Only
+these five normalized distances enter the model. Every 0.1 simulated seconds the
+game reads sensors, records the human action, then moves the car. AI, practice,
+paused and post-collision frames are never recorded. Footprint collision uses an
+18 × 10 rectangle with six movement substeps. Checkpoints require forward, ordered
+crossings; the finish counts only after all gates. Drawing interpolates between
+control steps at the browser's refresh rate. Hidden tabs, lost focus, or stalls
+longer than 250 ms pause the game instead of accumulating a backlog.
 
-Back in the page, click **AI Drive**. It loads the latest saved tree and starts a
-new run. No server restart or browser refresh is needed after retraining. AI
-predictions never become human training examples. Start/Drive returns to manual
-control. If no model exists, the page explains how to train one.
+Training validates rows and warns about missing actions and heavy imbalance.
+JSON contains the learned nodes, feature order, parameters, seed, dependency
+version, sample count, and input file hashes. The browser follows those exact
+learned decisions, including sklearn's float32 input comparisons. No hand-coded
+driver substitutes for the model. JSON is data, not executable code or pickle.
+Old `pygame-1` recordings are preserved and skipped by the default loader because
+the new analytical circular geometry differs slightly; collect new examples.
+Old joblib models are never loaded. Training replaces `runtime/model.json` only
+when you explicitly run it.
 
 ## Local setup
 
-Use Python 3.12 (tested: 3.12.14). From this repository folder:
+Install Python **3.12.14**, VS Code, and its **Live Server** extension. From this
+repository root:
 
-```bash
-python3 -m venv .venv
+```sh
+python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python driving_school.py
 ```
 
-Open [localhost:8000](http://localhost:8000). On Windows use `py -3.12 -m venv .venv`
-and `.venv\Scripts\python.exe` instead of `.venv/bin/python`. Native Windows setup
-has not been verified here. Keep one server process; do not use multiple workers.
+On Windows use `py -3.12 -m venv .venv`, then
+`.venv\Scripts\python -m pip install -r requirements.txt` and
+`.venv\Scripts\python train.py`. Open `web/index.html` with Live Server. Use the URL it opens; locally prefer
+`http://localhost:5500/web/index.html` when serving the repository root. A server
+serving `web/` directly instead uses `/index.html`. Do not run two servers on 5500.
 
-Edit files in `web/` to change the HTML/CSS/JS, then refresh the page to see changes.
-Changes to Python server files need a server restart; changes to `train.py` only
-need rerunning that script. Stop the server with Ctrl+C. After class, save your
-work and stop the Codespace; closing the browser is not the same as stopping it.
+## Checks and troubleshooting
 
-## Files students use
-
-```text
-driving_school.py   Start the server
-train.py            The ML code students study/edit
-web/                index.html, style.css, app.js
-simulator/          Supplied physics and recording helpers
-WORKSHEET.md        Short activity and experiment table
-tests/             Automated checks
-runtime/           Generated CSVs and saved model (Git-ignored)
-```
-
-Recordings are unique CSV files under `runtime/recordings/`. Training reads all
-of them and replaces `runtime/model.joblib`, with readable details in
-`runtime/model.json`. Move unwanted CSVs out of recordings/ to exclude them.
-Your previous desktop-version data and model remain compatible. Only load your
-own trusted joblib artifacts; these files can execute code.
-
-Files survive server restarts. Download or back up your code/data before deleting
-a Codespace. The [worksheet](WORKSHEET.md) guides the lesson. A lap on this one
-track does not demonstrate generalization. This is an educational simulation,
-not a model of real-world autonomous-driving safety.
-
-## Tests and troubleshooting
-
-```bash
+```sh
 .venv/bin/python -m pytest -q
+node --test tests/simulation.test.js
+node --check web/app.js
 ```
 
-- Page says it cannot connect: start the Python server and open its port 8000,
-  not a Live Server port or the HTML file directly.
-- Keys do nothing: click Start or Drive to focus the track.
-- No examples: click Drive and actually move before pausing.
-- Missing model: pause, run train.py, then click AI Drive.
-- Connection paused: the server stops after 0.8 seconds without input. Click a
-  driving button to resume. A server stall also pauses instead of replaying inputs.
-- Server restarted: refresh the page; saved files are safe.
+Node is needed for development tests, not for students to drive or train. CI
+installs Node 22.14.0. Tests check geometry, collision, ordered laps, deterministic
+steps, recording alignment, CSV rejection, and Python-to-JavaScript prediction
+agreement on 200 deterministic inputs. Python 3.12.14 was tested locally.
+Local verification (2026-10-26): **16 Python tests and 11 JavaScript tests passed**.
+Geometry checks cover boundary intersections, legal centerlines, sensor ranges,
+start/finish alignment, and collision-free laps from three deterministic starts
+per track. The waypoint follower used for geometry tests is test-only, not the
+learned driver. Browser checks covered all three track selections, rendering,
+recording, switching with retained samples, model loading, and AI playback.
 
-**Verification:** 19 automated tests passed. Local browser checks verified recording,
-Pause, training in a separate process, loading the new model with AI Drive, and
-Reset. The smoke test used temporary data; existing recordings/model were preserved.
-A real Codespace/container build and hosted GitHub Actions run have not been
-performed for this edition. Check private HTTPS forwarding before class.
+A separate training smoke check generated 2,844 synthetic examples using a
+waypoint follower on these three tracks (center start and ±8-unit offsets).
+The unchanged `train.py` settings (depth 6, leaf minimum 3, seed 1101) exported a
+model that completed all three nominal-start laps in the actual JavaScript engine:
 
-## What Drive records
+| Track | Progress | Collision | Simulated time |
+| --- | --- | --- | --- |
+| Round | 100% | No | 27.5 s |
+| Rounded rectangle | 100% | No | 38.3 s |
+| Irregular | 100% | No | 28.4 s |
 
-At each 0.1-second control step Python reads sensors, records them with the human
-action and current waypoint metadata, then moves the car. Paused frames and
-post-collision states are not recorded. A collision-causing action is saved with
-its pre-collision observation. Each new recording has a unique filename.
+These are training-track smoke checks, not held-out generalization results or a
+promise about student-trained models. The synthetic files were temporary and did
+not replace student recordings or models. Hosted Codespaces still needs preflight.
 
-| Columns | Meaning |
-|---|---|
-| `left`, `front_left`, `front`, `front_right`, `right` | Model features: wall distances divided by 180, capped at 1 |
-| `steering` | Label: left, straight, right |
-| `track_id`, `split`, `episode_id` | Where the example came from |
-| `step`, `time` | Control step and simulation seconds before the action |
-| `x`, `y`, `heading` | Position and heading, for inspection only |
-| `next_waypoint`, `waypoint_x`, `waypoint_y` | Next ordered waypoint |
-| `waypoints_passed`, `progress` | Ordered count and percentage |
-| `schema_version` | Legacy label `pygame-1`, retained for existing data compatibility |
+- **No port:** start Live Server and look for port 5500; check the extension is installed.
+- **Car stopped:** click Start/Drive and keep the canvas focused. Switching windows pauses.
+- **Empty training data:** download a Drive recording and upload the CSV to `runtime/recordings/`.
+- **Wrong format / unsupported track:** old `rect`, `oval`, `curvy`, and `irregular`
+  track IDs are retired. Move those CSVs out of `runtime/recordings/` if you want to
+  retain them, then collect new examples. Existing files are never automatically deleted.
+- **AI unavailable:** train, download the JSON, load it using the file picker, then click AI Drive.
+- **AI crashes:** inspect label counts; record controlled turns as well as straight driving.
+- **Python missing imports:** run the setup command and use the `.venv` interpreter.
 
-Five rays are ordered left-to-right at -70°, -35°, 0°, +35°, +70° relative to heading.
-The car travels 48 units/second, with an 18×10 physical footprint and four collision
-substeps. The single circle lives in simulator/core.py. Completing a lap requires
-all waypoints in order, then a forward finish crossing. Metadata never enters the
-feature matrix. A clockwise circle naturally favors right/straight labels; the
-training script warns about missing action classes and heavy imbalance.
+This is an educational toy, not a real-world autonomous-driving safety model.
+All three tracks allow training. To explore generalization, reserve one track
+from your demonstrations and model selection, then test on it after freezing your
+settings. A track already used for demonstrations is not held out. Multiple tracks
+provide different situations; they do not guarantee that overfitting disappears. Steering-label accuracy also does not guarantee a successful
+lap: small mistakes can lead to states absent from demonstrations.

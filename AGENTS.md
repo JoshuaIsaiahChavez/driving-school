@@ -1,24 +1,23 @@
-# AI Driving School — simple browser edition
+# AI Driving School
 
-The user's latest design uses plain HTML/CSS/JavaScript Canvas and a small Python
-server, not Pygame or a remote desktop. Keep the page to one track, five buttons
-(Start, Drive, Pause, Reset, AI Drive) and a short status line. No dashboard, model
-selection UI or frontend build system. Students run driving_school.py to serve the
-page and train.py separately to fit their decision tree. Port 8000 stays private
-in Codespaces. Live Server alone cannot run the Python API.
+Keep the student experience simple: three Canvas tracks (round, rounded rectangle, irregular), manual
+practice/recording, CSV download, JSON model load, and AI playback. No dashboard,
+frontend build system, Python server, Pygame, or remote desktop.
 
-Physics, sensors and ordered waypoints remain authoritative in simulator/core.py.
-JavaScript renders snapshots and sends controls only. Use fixed 0.1-second steps,
-independent browser sessions, an input watchdog, and bounded queues. Focus loss
-pauses and clears steering. Log sensors/actions/metadata before moving. Never
-record AI actions or paused frames. Only five sensor features enter the model.
+JavaScript owns all physics, normalized sensors, ordered checkpoints, recording
+and inference. Python is used only to train sklearn's decision tree and export
+its nodes as JSON. Students edit train.py. Keep training.py supplied scaffolding.
+Use Live Server on private forwarded port 5500. No network requests during driving.
 
-Keep the single circular track inline in core.py. Preserve runtime/ recordings and
-models, including the legacy pygame-1 schema label; no automatic data migration or
-retraining. Instructor materials stay local in ignored instructor/. Never force-add
-or push them. Obsolete versions were deleted; do not recreate archival copies.
+Observe and label before moving. Pause on focus loss and long frames. Use fixed
+simulation steps and smooth rendering, bounded memory, independent tab state,
+strict CSV and JSON validation, and five features only. Test Python/JS prediction
+parity and simulation behavior. Do not claim a hosted Codespaces check unless run.
 
-Keep the file tree small: two entry scripts, web/, simulator/, tests/, README and
-WORKSHEET plus minimal hidden Codespaces/CI settings. Test the actual API and shared
-simulation. Report local browser evidence separately from hosted Codespaces checks.
-Never publish or push without explicit user authorization.
+Preserve existing runtime files. Instructor materials stay in ignored instructor/;
+never force-add or push them. Do not recreate obsolete archived implementations.
+Do not publish or push without explicit user authorization for that action.
+
+Track geometry changes need new IDs to avoid silently mixing incompatible recordings.
+Keep the registry and Python training allowlist in sync; test complete ordered laps
+on every layout from multiple starts, and check boundaries for self-intersections.

@@ -8,5 +8,7 @@
     "**/.pytest_cache": true,
     "**/*.egg-info": true,
     ".venv": true
-  }
+  },
+  "liveServer.settings.host": "0.0.0.0",
+  "liveServer.settings.port": 5500
 }
