@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Driving School</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>AI Driving School</h1>
+    <p>Drive the car. Collect examples. Teach a decision tree.</p>
+    <canvas id="track" width="900" height="600" tabindex="0" aria-label="Driving track. Left and right arrows steer; Space pauses."></canvas>
+    <div class="controls" aria-label="Driving controls">
+      <button data-command="Start">Start</button>
+      <button data-command="Drive" class="primary">Drive · record</button>
+      <button data-command="Pause">Pause</button>
+      <button data-command="Reset">Reset</button>
+      <button data-command="AI">AI Drive</button>
+    </div>
+    <p id="status" role="status" aria-live="polite">Connecting to Python…</p>
+    <p id="details">Paused · 0 examples saved this tab</p>
+    <p class="hint"><strong>← →</strong> steer · <strong>Space</strong> pauses · Start practices without recording.<br>
+      After recording: Pause, run <code>.venv/bin/python train.py</code> in another terminal, then click <strong>AI Drive</strong>.</p>
+    <details><summary>What the car sees</summary><p id="sensors">Five wall distances, left to right.</p><p class="hint">0 = at the wall; 1 = at least 180 units away. These five numbers are the model’s only features.</p></details>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
