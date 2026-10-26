@@ -1,11 +1,6 @@
 # AI Driving School
 
-Can we teach a car to drive from examples?
-
-A small browser simulator for an introductory machine-learning lesson. **HTML,
-CSS, and JavaScript run the entire game locally in your browser. Python is used
-only to train a scikit-learn decision tree.** No Python server, Pygame, API,
-frontend build system, or model upload service is needed.
+A small browser simulator for an introductory machine-learning lesson where you train a car to drive.
 
 ## Start in Codespaces
 
@@ -17,9 +12,7 @@ frontend build system, or model upload service is needed.
 
 Live Server serves the files; driving does not make network requests. Each tab has
 its own car and examples. The host and port are configured in `.vscode/settings.json`.
-Codespaces availability and cost depend on your account and organization policies.
-Check access and available usage before class. Stop your Codespace after class
-using the Codespaces menu or GitHub's Codespaces page.
+
 
 ## Drive, train, and watch
 
@@ -52,19 +45,6 @@ re-exporting the same rows. Closing or refreshing the tab loses its examples and
 loaded model. Download before closing. Uploaded CSVs and exported models survive
 Codespace restarts, but download your work before deleting a Codespace.
 
-## Included recording and model
-
-This snapshot includes a 336-example recording from Irregular in
-`runtime/recordings/` and its trained `runtime/model.json`. For a quick Codespaces
-check, open the simulator, download that JSON from VS Code, load it in the page,
-select Irregular, and click AI Drive. You can also rerun `train.py` using the
-included CSV. The model completed Irregular and Rounded rectangle in local
-headless checks; it collided at about 21% progress on Round.
-
-These files are intentionally committed for classroom testing. New recordings and
-other generated runtime files remain ignored by Git. Retraining changes the tracked
-model file; download your work before deleting a Codespace. The obsolete joblib
-artifact is not included and is not used by the browser.
 
 ## Files to study
 
@@ -73,7 +53,6 @@ artifact is not included and is not used by the browser.
 - `training.py`: supplied CSV validation and JSON export helpers.
 - `web/index.html`, `style.css`, `app.js`: page, appearance, controls and animation.
 - `web/simulation.js`: physics, sensors, waypoints and decision-tree prediction.
-- `WORKSHEET.md`: activity and reflection questions.
 
 `max_depth` limits how many successive questions the tree can ask.
 `min_samples_leaf` sets the minimum examples supporting a final decision.
