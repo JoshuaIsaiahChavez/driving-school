@@ -2,6 +2,26 @@
 
 A small browser simulator for an introductory machine-learning lesson where you train a car to drive.
 
+## Machine learning concepts
+
+**Supervised learning** is a machine-learning approach that fits a model to paired inputs and target outputs to predict outputs for new inputs.
+
+**Example:** Train on five sensor distances (features) paired with the human's steering action (label), then predict steering from new sensor readings.
+
+**A decision tree** is a predictive model that partitions inputs through feature-based tests; branches represent test outcomes, and leaves provide predictions.
+
+**Example:** This illustrative tree predicts steering from normalized sensor distances. The actual model learns its tests and thresholds from the recorded examples.
+
+```text
+Front distance <= 0.30?
+├── No  → Predict STRAIGHT
+└── Yes → Left distance <= 0.25?
+          ├── Yes → Predict RIGHT
+          └── No  → Predict LEFT
+```
+
+With `front = 0.20` and `left = 0.65`, the path is Yes → No → **LEFT**.
+
 ## Start in Codespaces
 
 1. Open your copy of this repository in a Codespace. Wait for the environment setup
