@@ -8,21 +8,7 @@ MIN_SAMPLES_LEAF = 3
 
 
 def train():
-    rows = load_examples()
-    # Features: only the five distances, in the same left-to-right order.
-    feature_columns = ['left', 'front_left', 'front', 'front_right', 'right']
-    X = [[row[column] for column in feature_columns] for row in rows]
-    # Label: what the human did at that moment.
-    y = [row['steering'] for row in rows]
-    model = DecisionTreeClassifier(
-        max_depth=MAX_DEPTH,
-        min_samples_leaf=MIN_SAMPLES_LEAF,
-        random_state=1101,
-    )
-    model.fit(X, y)
-    save_model(model, rows)
-    print(f'Trained on {len(rows)} examples. Load runtime/model.json in the browser, then click AI Drive.')
-    return model
+    # NEEDS DEFINITION
 
 
 if __name__ == '__main__':
