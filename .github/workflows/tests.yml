@@ -11,8 +11,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22.14.0'
-      - run: node --test tests/simulation.test.js
+      - run: node --test tests/*.test.js
       - run: python -m pip install -r requirements.txt
       - run: python -m pytest -q
-      - name: Keep instructor material local
-        run: test -z "$(git ls-files instructor)"
+      - name: Keep instructor material and generated data out of Git
+        run: test -z "$(git ls-files instructor runtime)"

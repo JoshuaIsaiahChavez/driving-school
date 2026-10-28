@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Obstacle Sprint · AI Driving School</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="drag.css">
+</head>
+<body>
+  <main>
+    <a class="back" href="index.html">← Back to the three tracks</a> · <a class="back" href="race.html">Final race preview →</a>
+    <header><div><p class="eyebrow">AI DRIVING SCHOOL / MANUAL PRACTICE</p>
+      <h1>Obstacle Sprint</h1><p class="intro">Find your line. Control your speed. Reach the finish.</p></div>
+      <span id="course-name" class="course-tag">Wide slalom · 7 barriers</span></header>
+    <div class="race-setup">
+      <label for="practice-layout">Training layout</label>
+      <select id="practice-layout">
+        <option value="drag-practice-2">Wide slalom</option>
+        <option value="drag-practice-tight-1">Tighter slalom</option>
+        <option value="drag-practice-mixed-1">Mixed spacing</option>
+        <option value="random">Random practice (race layout)</option>
+      </select>
+      <label for="practice-seed">Random seed</label>
+      <input id="practice-seed" type="number" min="1" max="999999" step="1" value="42">
+      <button id="build-practice">Build from seed</button>
+      <button id="new-practice">New random layout</button>
+      <span id="layout-tip" class="note"></span>
+    </div>
+    <div class="instruments" aria-label="Run information">
+      <div><span>Speed</span><strong><output id="speed">0</output><small> units/s</small></strong></div>
+      <div><span>Course progress</span><strong id="progress">0%</strong></div>
+      <div><span>Simulation time</span><strong id="elapsed">0.0 s</strong></div>
+    </div>
+    <canvas id="course" width="900" height="600" tabindex="0" aria-label="Straight obstacle course. Up or W accelerates; Down or S brakes; Left and Right or A and D steer. Space pauses.">Your browser needs Canvas support to display the course.</canvas>
+    <div class="toolbar"><div class="buttons">
+      <button id="start">Start run</button><button id="record" class="primary">Record drive</button><button id="pause">Pause</button><button id="reset">Reset</button>
+    </div><label><input id="rays" type="checkbox" checked> Show sensors</label></div>
+    <p id="status" role="status" aria-live="polite">Ready. Start the run, then hold ↑ or W to accelerate.</p>
+    <div class="recording-panel" aria-label="AI practice controls">
+      <label for="practice-model">Student model (.json, drag-model-2)</label>
+      <input id="practice-model" type="file" accept=".json,application/json">
+      <span id="model-name">No model loaded</span>
+      <button id="ai-drive" disabled>AI Drive</button>
+      <label><input id="practice-assist" type="checkbox" checked> Anti-stall assist</label>
+      <p id="ai-readout" aria-live="polite">Manual mode</p>
+      <p class="note">Load one model to test the selected layout. AI never records examples.
+        Pause then AI Drive to resume; Reset starts fresh and keeps the model loaded.
+        Start run or Record drive switches back to manual at the start.
+        Assist applies one second of acceleration after five seconds below 2 units/s.
+        AI runs use the race's 120-second limit. Model files stay in this tab until refresh.</p>
+    </div>
+    <div class="recording-panel" aria-label="Recording controls">
+      <p id="recording-state">Not recording · 0 examples in this tab</p>
+      <div class="buttons"><button id="download">Download CSV</button><button id="clear">Clear examples</button></div>
+      <p id="label-counts" class="note"></p>
+      <p class="note">Start run is practice. Record drive collects 60 examples per simulated second.
+        Pause stops recording; click Record drive to resume. Reset and switching layouts keep examples. Switching layouts pauses recording and starts a new episode.
+        Download before closing or refreshing this page. Exports contain all examples in this tab; clear after saving to avoid duplicate exports.</p>
+    </div>
+    <p class="note">Two throttle actions: accelerate or brake. Older models and recordings require new demonstrations and retraining.</p>
+    <p class="instructions"><kbd>↑</kbd> / <kbd>W</kbd> accelerate &nbsp; <kbd>↓</kbd> / <kbd>S</kbd> brake &nbsp;
+      <kbd>←</kbd><kbd>→</kbd> / <kbd>A</kbd><kbd>D</kbd> steer &nbsp; <kbd>Space</kbd> pause</p>
+    <p class="note">Steer through the gaps between barriers and walls. Release ↑/W to brake automatically. Slow down before a bend around an obstacle. A wall or obstacle collision ends the run.
+      Switching tabs or losing track focus pauses the car. Reset returns you to the same course.</p>
+    <details><summary>What this prototype does</summary>
+      <p>This is manual practice with acceleration, braking, and five sensors that detect walls and obstacles.
+      Steering widens at high speed; you cannot turn in place. Speed is measured in simulation units, not km/h.</p>
+      <p>Both steering directions together mean straight. No accelerator means brake; ↓/S also brakes and takes priority over accelerate. There is no reverse gear.</p>
+      <p>Sensor values are normalized from 0 (at a surface) to 1 (nothing within 300 units).
+        CSV recordings include five normalized distances and speed, plus steering and throttle labels. This page supports fixed and seeded random practice layouts. Load one trained model here for practice, or multiple models on the race page. Train these CSVs with train_drag.py, then load the JSON models on the Final race page. The original train.py uses a different format. Your existing models still run on the original three-track page.</p>
+      <p id="sensor-values" class="sensor-values"></p>
+    </details>
+  </main>
+  <script src="drag-simulation.js"></script><script src="race-simulation.js"></script><script src="drag-model.js"></script><script src="drag.js"></script>
+</body>
+</html>

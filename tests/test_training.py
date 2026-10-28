@@ -26,7 +26,12 @@ def make_csv(tmp_path, track_id="round"):
 def test_train_export_matches_sklearn(tmp_path, monkeypatch):
     monkeypatch.setattr(training, 'DATA_DIR', tmp_path)
     make_csv(tmp_path)
-    model = train()
+    from sklearn.tree import DecisionTreeClassifier
+    rows = training.load_examples()
+    X = [[r[f] for f in training.FEATURES] for r in rows]
+    model = DecisionTreeClassifier(max_depth=6, min_samples_leaf=3, random_state=42)
+    model.fit(X, [r['steering'] for r in rows])
+    training.save_model(model, rows)
     artifact = tmp_path / 'model.json'
     rng = np.random.default_rng(1101)
     values = rng.random((200, 5)).tolist()
@@ -72,3 +77,8 @@ def test_retired_tracks_rejected(tmp_path, old_track):
     path.write_text(path.read_text().replace(',round,', ',' + old_track + ','))
     with pytest.raises(ValueError, match='not supported training data'):
         training.load_examples([path])
+
+
+def test_live_coding_starter_has_helpful_message():
+    with pytest.raises(ValueError, match='Complete train'):
+        train()

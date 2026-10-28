@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Final Race · AI Driving School</title>
+  <link rel="icon" href="data:,"><link rel="stylesheet" href="drag.css">
+</head>
+<body>
+<main>
+  <a class="back" href="drag.html">← Back to obstacle practice</a>
+  <header><div><p class="eyebrow">AI DRIVING SCHOOL / RACE PREVIEW</p>
+    <h1>Final Race</h1><p class="intro">One course. Independent drivers. The same starting line.</p>
+  </div><span class="course-tag">Ghost cars · 12 obstacles</span></header>
+  <div class="race-setup">
+    <label for="seed">Course seed <input id="seed" type="number" min="1" max="999999" step="1" value="42"></label>
+    <button id="course-button">Build course</button><button id="add-driver">Add driver</button>
+    <span class="note">Same seed = same obstacles for every driver.</span>
+  </div>
+  <canvas id="race-course" width="900" height="600" tabindex="0" aria-label="Shared obstacle race course and whole-course overview. Driver numbers identify the ghost cars. Space pauses."></canvas>
+  <div class="toolbar"><div class="buttons">
+    <button id="start-race" class="primary" disabled>Start race</button><button id="pause-race" disabled>Pause</button><button id="reset-race">Reset race</button>
+  </div><strong id="race-time">0.0 s</strong></div>
+  <p id="race-status" role="status" aria-live="polite">Waiting for models. Driver 1 and Driver 2 are empty slots.</p>
+  <label><input id="anti-stall" type="checkbox" checked> Anti-stall assist: after 5 seconds below 2 units/s, accelerate for 1 second</label>
+  <p class="note">This is a programmed assist, not a learned action. Model steering stays in control; collisions still end the run.
+    Each driver shows its restart count. Reset before changing this setting; it applies equally to every car.</p>
+  <div id="drivers" class="drivers" aria-label="Drivers and model slots"></div>
+  <p class="note">Train new automatic-braking recordings with train_drag.py, then choose a separate JSON model for each driver.
+    Reset the race to change models. Empty cars stay at the start. Files stay in this browser tab; reload them after refreshing.</p>
+  <details><summary>How this race will work</summary>
+    <p>Every car gets the same course, starting position, speed, sensors, and physics. Ghost cars can overlap;
+      they detect only walls and obstacles, not other cars. Driver numbers and labels identify overlapping cars.</p>
+    <p>A collision ends only that car's run. The others continue until they finish, collide, or reach 120 simulated seconds.
+      The camera follows the leading active car; the overview shows every car. Losing page focus pauses the race.</p>
+    <p>Preview different obstacle arrangements with the seed control. Freeze the students' models before revealing the final seed
+      if you want to test generalization. A course that students have practiced on is no longer held out.</p>
+  </details>
+</main>
+<script src="drag-simulation.js"></script><script src="race-simulation.js"></script><script src="drag-model.js"></script><script src="race.js"></script>
+</body>
+</html>
