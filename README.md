@@ -178,27 +178,12 @@ the model finishes entirely on its own. Record the setting in your experiment
 and keep it consistent when comparing runs. Changing the setting resets an AI
 practice run; reset before changing it on the race page.
 
-### Race student models
 
-Open `web/race.html`, select a seed, and click **Build course**. Load a compatible
-JSON under Driver 1 and Driver 2; **Add driver** supports up to eight. Every slot
-needs a model before **Start race** is enabled. Reset to replace models. You may
-load the same model twice to check repeatability; cars then overlap.
-
-Each car has independent model control, the same start, physics, course, and
-120-second simulated time limit. They are ghost cars: they detect walls and
-obstacles but do not collide with or sense one another. A collision ends only that
-car's run. The main camera follows the leading active car; the overview shows all.
-
-For an unseen-course test, choose the final seed after freezing your model.
-Practicing a seed makes it a seen course. Multiple training layouts do not guarantee
-that overfitting disappears. Matching human labels is different from finishing:
-a small prediction error can move the car into situations absent from the data.
 
 ### Data and compatibility
 
 Obstacle recordings use schema **`drag-2`** and exported models **`drag-model-2`**.
-Older coast-based recordings/models and Part 1 steering-only files are incompatible.
+Part 1 steering-only files are incompatible.
 Collect fresh automatic-braking demonstrations rather than relabeling old rows.
 
 | Data | Meaning |
